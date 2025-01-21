@@ -1,0 +1,118 @@
+//
+// Proposed Register Names for ESP Front End (FE) at 0x3FF450xx / 0x3FF460xx
+//
+// Based on disassembly in ram_write_gain_mem(), set_rx_gain_cal_iq(), 
+// ram_pbus_force_test(), and other routines, as well as the usage patterns
+// in “pbus” and “phy” code.
+//
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// PBUS / Gain Memory / TX Rate Offset Section (mostly 0x3FF450xx region)
+//
+
+/*
+ *  The pair (0x3FF45034, 0x3FF45038) appear to be used for writing data to 
+ *  an internal “gain memory.” The code does a read–modify–write dance:
+ *     - 0x3FF45034: holds the "address" or sub-fields for the gain table
+ *     - 0x3FF45038: holds the 32-bit “data” we’re writing.
+ */
+
+#define FE_GAINMEM_ADDR   0x3FF45034  // ram_write_gain_mem uses this for an “addr/command”
+#define FE_GAINMEM_DATA   0x3FF45038  // “data_l”/“data_h” go here for the selected address
+
+/*
+ *  In write_txrate_power_offset(), big constants are stored to:
+ *    0x3FF4503C..0x3FF45078
+ *  These are likely per-rate or per-mode power offsets.
+ */
+
+#define FE_TXRATE_OFFSET0  0x3FF4503C
+#define FE_TXRATE_OFFSET1  0x3FF45040
+#define FE_TXRATE_OFFSET2  0x3FF45044
+#define FE_TXRATE_OFFSET3  0x3FF45048
+#define FE_TXRATE_OFFSET4  0x3FF4505C
+#define FE_TXRATE_OFFSET5  0x3FF4506C
+#define FE_TXRATE_OFFSET6  0x3FF45070
+#define FE_TXRATE_OFFSET7  0x3FF45074
+#define FE_TXRATE_OFFSET8  0x3FF45078
+// TODO: Confirm these offsets are for different 802.11 rates or similar by analyzing call sites.
+
+#define FE_TONECFG      0x3FF450A8  // Used by start_tx_tone; likely "tone step" or frequency config.
+#define FE_PARAM3       0x3FF450D0  // Calibration/test parameter.
+#define FE_PARAM4       0x3FF450D8  // Calibration/test parameter.
+#define FE_TESTCTRL     0x3FF450DC  // Large bits (0x8000000, 0x10000000) toggle loopback or DC calibration.
+#define FE_PARAM5       0x3FF450F0  // Pipeline delay or clock parameter (observed in set_txclk_en).
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Antenna Switch / TX Pin Routing (mostly 0x3FF451xx)
+//
+
+/*
+ * These 0x3FF451xx addresses appear in ant_wifitx_cfg() and esp_tx_state_out(), 
+ * controlling which antenna lines or front-end pins are active for Wi-Fi or BT.
+ */
+#define FE_ANTSW_CFG0   0x3FF45104
+#define FE_ANTSW_CFG1   0x3FF45108
+#define FE_ANTSW_CFG2   0x3FF4510C
+#define FE_ANTSW_CFG3   0x3FF45110
+#define FE_ANTSW_CFG4   0x3FF45114
+// TODO: Review ant_rx_cfg() or ant_tx_cfg(). Likely used for diversity or external LNA/PA switching.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Main Front-End Control or AGC Region (mostly 0x3FF460xx)
+//
+
+/*
+ * A block of registers used for clock gating or domain toggles.
+ */
+#define FE_CTRL0        0x3FF46000
+#define FE_CTRL1        0x3FF46004
+#define FE_CTRL2        0x3FF46008
+#define FE_CTRL3        0x3FF4600C
+#define FE_CTRL4        0x3FF46010
+
+/*
+ * Extended control or debug registers.
+ */
+#define FE_CTRL5        0x3FF46030
+#define FE_CTRL6        0x3FF46034
+#define FE_CTRL7        0x3FF46038
+#define FE_CTRL8        0x3FF4603C
+#define FE_CTRL9        0x3FF46040
+#define FE_CTRL10       0x3FF46044
+#define FE_CTRL11       0x3FF46048
+#define FE_CTRL12       0x3FF4604C
+// TODO: FE_CTRL5..CTRL12 may handle advanced front-end config or test logic (referenced in ram_pbus_force_test).
+
+#define FE_AGCCTRL0     0x3FF46080  // AGC control; toggled in enable_wifi_agc() and force_bttx_gain().
+#define FE_AGCCTRL1     0x3FF4608C  // AGC threshold or state config.
+#define FE_AGCCTRL2     0x3FF4609C  // AGC threshold or state config.
+
+#define FE_TXCLKCFG     0x3FF460A0  
+// Bits in here enable or disable the TX clock domain (observed in set_txclk_en).
+
+#define FE_PARAM6       0x3FF460B8  
+// Used in ram_start_tx_tone, possibly related to tone generation or BT coexistence.
+
+#define FE_BT_DIG_GAIN_FORCE  0x3FF460DC  
+// Tentative name; forces BT digital gain/attenuation (large bit sets observed).
+
+#define FE_IQ_MEAS_STATUS 0x3FF460E4  
+// Read in set_rx_gain_cal_iq() to check measurement status.
+
+#define FE_PARAM7       0x3FF46094  
+// Read/written in ram_pbus_force_test, possibly for debug or PBUS configuration.
+
+//////////////////////////////////////////////////////////////////////////////////////////
+// Additional Notes / TODOs
+// 
+// 1) Registers like 0x3FF46094 and 0x3FF4609C seem to handle PBUS control/debugging, 
+//    toggling test bits or configurations (as seen in ram_pbus_force_test).
+// 
+// 2) Some FE_PARAMx registers are placeholders for now. Their subfields and true purposes 
+//    need clarification from further code analysis or hardware documentation.
+// 
+// 3) Some FE_PARAMx registers are placeholders for now. Their subfields and true purposes 
+//    need clarification from further code analysis or hardware documentation.
+/
+
