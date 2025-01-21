@@ -1,0 +1,153 @@
+// Below is a proposal for register names (all within 0x3FF5Cxxx / 0x3FF5Dxxx PHY space).
+// These names are hypothetical, based on the observed usage in phy_chip_v7.c. 
+
+
+0x3FF5C004 -> PHY_AGC_CTRL0
+    // Clears bit 16 in agc_reg_init(). Possibly an AGC reset/disable bit.
+
+0x3FF5C07C -> PHY_AGC_CTRL1
+    // Writes bits [23:16] = 0x9C. Another AGC threshold/timing param.
+
+0x3FF5C080 -> PHY_AGC_WIFI_EN
+    // Used to enable/disable Wi-Fi AGC (bit 0) & power domain bits [7:6].
+
+0x3FF5C088 -> PHY_AGC_PARAM1
+    // Writes low byte = 5. Some small AGC param.
+
+0x3FF5C094 -> PHY_AGC_PARAM2
+    // Written = 0x01B8DD03. A larger calibration constant for AGC.
+
+0x3FF5C0A0 -> PHY_AGC_PARAM3
+    // Combined masks in agc_reg_init() - partial bits might set gain/time windows.
+
+0x3FF5C0A4 -> PHY_AGC_PARAM4
+    // Also heavily masked (bits [13:7], [6:0]) => 0x1E & 0x3C.
+
+0x3FF5C0B8 -> PHY_BB_PARAM1
+    // Possibly part of baseband config. Not heavily documented.
+
+0x3FF5C0C4 -> PHY_AGC_PARAM5
+    // Direct write = 0x6450403F. Another large AGC or BB param.
+
+0x3FF5C0CC -> PHY_CCA_MULTI_FIELD
+    // Used in set_rx_sense() to manipulate bits [9:0], [19:10], [29:20] with thresholds.
+
+0x3FF5C0D0 -> PHY_BB_PARAM2
+    // Another baseband config register. Not singled out in code, might relate to CCA.
+
+0x3FF5C0F0 -> PHY_BB_PARAM3
+    // Typically loaded with large constants in init routines.
+
+0x3FF5C0F8 -> PHY_AGC_PARAM6
+    // In agc_reg_init(), sets bits [17:10] = 0x37 (0x37400).
+
+0x3FF5C104 -> PHY_BB_PARAM4
+    // Clears bit 15 in agc_reg_init().
+
+0x3FF5C108 -> PHY_RX_SENSE_EN
+    // Toggled in phy_rx_sense_set(). Possibly enabling sense or detection.
+
+0x3FF5C11C -> PHY_ANT_CFG0
+    // Written with 0xE000 in phy_ant_init(). Possibly antenna path switching.
+
+0x3FF5C120 -> PHY_ANT_CFG1
+    // Written with 0x1E101E1C. Another antenna or front-end config.
+
+0x3FF5C124 -> PHY_ANT_CFG2
+    // Also changed in set_rx_sense() if sense_thr > 0x20. Possibly advanced BB or antenna param.
+
+0x3FF5C400 -> PHY_BBTX_CFG0
+    // In bb_reg_init(), mask sets bits [15:0] to 0x60A5. Possibly channel 14 or mic config.
+
+0x3FF5C404 -> PHY_BBTX_CFG1
+    // likely another TX param.
+
+0x3FF5C450 -> PHY_BBTX_CBW_CFG
+    // Toggled in some 40MHz context (bb_bss_cbw40?), sets bits [3:2].
+
+0x3FF5C804 -> PHY_11B_LR_PARAM0
+    // Possibly controlling 11b or low-rate features (rx_11b_opt).
+
+0x3FF5C85C -> PHY_11B_LR_PARAM1
+    // Another 11b/lr param. Not heavily documented, but toggled in low-rate routines.
+
+0x3FF5C860 -> PHY_11B_LR_PARAM2
+    // Also used for 11b or LR enabling bits.
+
+0x3FF5C87C -> PHY_11B_LR_PARAM3
+    // Similar usage in low-rate or 11b optimization.
+
+0x3FF5CC04 -> PHY_BB_CAL_PARAM0
+    // bb_reg_init() => (val & 0xFFFFFE03) | 0x2C. Possibly partial baseband calibration.
+
+0x3FF5CC08 -> PHY_BB_CAL_PARAM1
+    // Direct write = 0x90B4D20 in bb_reg_init().
+
+0x3FF5CC0C -> PHY_BB_CAL_PARAM2
+    // 0x1241FC or toggled in phy_chan_filt_set() for filter enable bits [21,22].
+
+0x3FF5CC48 -> PHY_BB_FILTER_PARAM
+    // Direct write = 0x170433AF. Possibly a big filter or channel param.
+
+0x3FF5CCB8 -> PHY_BB_ADV_PARAM0
+    // Not singled out in the snippet. Possibly advanced BB or pbus.
+
+0x3FF5CCD8 -> PHY_BB_ADV_PARAM1
+    // Written = 0x186. Another small param for advanced BB config.
+
+0x3FF5CCDC -> PHY_BB_ADV_PARAM2
+    // 0x195C83C in bb_reg_init().
+
+0x3FF5CCE4 -> PHY_BB_CTRL_DEBUG
+    // In bb_reg_init(), clears bit 22. Possibly debug or test control.
+
+0x3FF5CD04 -> PHY_BB_CAL_PARAM3
+    // 0x51510556. Another baseband calibration constant.
+
+0x3FF5CD08 -> PHY_BB_CAL_PARAM4
+    // 0x51510556 again. Possibly a matching pair.
+
+0x3FF5CD0C -> PHY_BB_CAL_PARAM5
+    // Not singled out. Another advanced param.
+
+0x3FF5D000 -> PHY_BB_CTRL_MAIN
+    // ram_cbw2040_cfg() sets or clears bit [6] for 20/40 MHz mode. Possibly big “BB control.”
+
+0x3FF5D008 -> PHY_BB_DEBUG_1
+0x3FF5D014 -> PHY_BB_DEBUG_2
+0x3FF5D018 -> PHY_BB_DEBUG_3
+0x3FF5D01C -> PHY_BB_DEBUG_4
+0x3FF5D020 -> PHY_BB_DEBUG_5
+0x3FF5D03C -> PHY_BB_DEBUG_6
+    //  Possibly noise floor or watchdog states.
+
+0x3FF5C010 -> PHY_CCA_PARAM0
+0x3FF5C014 -> PHY_CCA_PARAM1
+0x3FF5C018 -> PHY_NOISE_MEAS_CTRL
+0x3FF5C01C -> PHY_CCA_PARAM2
+0x3FF5C024 -> PHY_BB_MISC0
+0x3FF5C028 -> PHY_BB_MISC1
+0x3FF5C02C -> PHY_AGC_TOGGLE_PARAM
+0x3FF5C030 -> PHY_AGC_BIGPARAM
+0x3FF5C038 -> PHY_BB_MISC2
+0x3FF5C044 -> PHY_BB_MISC3
+0x3FF5C050 -> PHY_NOISE_MEAS_DATA
+0x3FF5C074 -> PHY_BB_MISC4
+    // Various places in set_rx_sense(), noise_init(), etc. Possibly controlling 
+    // or reading noise floor, CCA thresholds, or sub-block states.
+
+0x3FF5D040 -> PHY_BB_WDT_CTRL
+0x3FF5D044 -> PHY_BB_WDT_MISC
+0x3FF5D050 -> PHY_BB_NOISE_READ
+    // For baseband watchdog and final noise read.
+
+
+/*
+  NOTE: All these names are proposed for clarity. 
+  They reflect approximate usage gleaned from the code:
+    AGC_  => registers mostly manipulated in agc_reg_init().
+    BB_   => “baseband” or noise floor / channel filter / subchannel logic.
+    CCA_  => clear-channel assessment thresholds or sense parameters.
+    ANT_  => antenna config.
+    MISC_ => a catch-all for partial usage.
+*/
